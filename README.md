@@ -192,5 +192,60 @@ TypeScript adds
 
 ### Debug with Visual Studio code
 .....
-###
+### Const and let
+
+### Arrow function
+
+### Default function params.
+```ts
+  const add = (a: number, b: number = 1) => a + b; //default b value = 1
+  add(5)// => result = 6
+```
+other case
+```ts
+  const add = (a:number = 1, b:number) => a + b; //default a value =  1
+  add(5); // => error because if we send a agument only -> get a = 5
+```
+### The Spread Operator
+```ts
+ //push array
+ const arr = ['Sports', 'Cooking'];
+ const arr1 = ['Hiking'];
+ arr1.push(...arr); // attract all value of a arr and push to arr1
+ 
+ //copy a object
+const person: {name!:string, age!: number} = {
+  name: 'Thanh',
+  age: 30
+}
+const thanh = {...person}; // attract all values of person and assign to thanh variable.
+```
+
+### Rest parameter
+```ts
+const add = (...numbers: number[]) => { //this is rest parameter
+  numbers.reduce((curResult, curValue) => {
+    return curResult + curValue;
+  }, 0);
+}
+
+console.log(add(5, 4, 5)); //value is 14;
+
+```
+### Array & Object destructuring
+```ts
+ const hobbies = ['Sports', 'Cooking'];
+ //destructure the  hobbies become some variable - with position 0 -> hobby1, 1-> hobby2
+ //and remain data -> remainingHobbies
+ const [hobby1, hobby2, ...remainingHobbies] = hobbies;
+ console.log(hobb1, hobbly2, remainingHobbies); 
+ const person: {name!:string, age!: number} = {
+  name: 'Thanh',
+  age: 30
+}
+ //destructure person object by key name -> name and map to username, age -> age
+ // variable so we have 2 variable username and age
+ const {name: useraname, age} = person; 
+ console.log(username, age, person);
+```
 
