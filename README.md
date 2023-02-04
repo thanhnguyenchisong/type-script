@@ -192,6 +192,7 @@ TypeScript adds
 
 ### Debug with Visual Studio code
 .....
+# SOME THING ELSE
 ### Const and let
 
 ### Arrow function
@@ -248,4 +249,276 @@ console.log(add(5, 4, 5)); //value is 14;
  const {name: useraname, age} = person; 
  console.log(username, age, person);
 ```
+# CLASSES & INTERFACE
+## Classes
+### 1.What is class ? 
+ Class is a blueprints for objects - template to create a object, define how objects look like, properoties and method and class make creation of multiple siminlar objects much esasier, alternative to using object literals.
+ Beside class - object is a instance of class. 
+### 2. Create a first class
+```ts
+ class Department {
+  // private id: string; //this is old way
+  // name: string; //this is old way
+  private employees: string[] = []; //make sure a way to access this property by addEmployee method.
 
+  //Shorthand initailization - this constructor creates the property and also create initial value of this class with the same name
+  constructor(private readonly id: string, public n: string) { //
+    // this.name = n;
+  }
+
+  describe() {
+    console.log('Department: ' + this.name);
+  }
+
+  addEmployee(employee: string) {
+    this.employees.push(employee);
+  }
+
+  printEmployeeInfomation() {
+    console.log(this.employees);
+  }
+ }
+
+ let department = new Department('Accounting'); //Have to create department by Department with constructor.
+ department.describe();
+
+ let departmentCopy = {describe: department.describe};
+ departmentCopy.describle(); // value is undefine because we copy the method only so this.name in method is departmentCopy's this so it is undefine.
+
+//correct it
+departmentCopy = {name: department.name, describe: department.describe}
+
+ ```
+### 3. Inheritance
+```ts
+ class ITDepartment extends Department { //auto recieved everything from Department
+  constructor(id: string, public admins: string[]) {
+    super(id, "IT");
+  }
+ }
+ 
+ const itdepartment = new ITDepartment("223", ["admin"]);
+ console.log(itdepartment.describe());
+ ```
+### 4. Overriding Properties and "protected" modifier
+ private is accessable inside of class, but child also would like to use it so we use protected
+ ```ts
+ //parent class
+  .....
+   protected employees: string[] = [];
+  .....
+
+ //overriding in ITDepartment
+ addEmployee(employee: string) {
+   if(employee === 'MAX') return;
+   this.employees.push(employee);
+ }
+```
+### 5. Getter and setter function
+ It is a method to get and set the private property, ecapsulate the properties
+```ts
+ private report:string;
+ get report() {
+  return this.report ? this.report : throw new Error('No report here');
+ }
+ set report(r: string) {
+  this.report = r ? r : throw new Error('Invalid report value');
+ }
+```
+### 6. Static Method & Properties
+Static properties can't be access directly in constructor be cause it isn't instance property but you can access by ClassName.staticProperty.
+```ts
+private static instance: ITDepartment = undefined;
+private ITDepartment();
+private constructor(id: string, public admins: string[]) {
+    super(id, "IT");
+}
+static buildITDepartment() { //singletons pattern and private contructor always stay together
+  instance ? instance : new buildITDepartment('ITDepartment', ['admin']);
+}
+
+//from outside of ITDepartment class
+const itdepartment = ITDepartment.buildITDepartment();
+```
+### 7. Abstract class
+You would like to force override some methods for childent, you can use the abstract, abstract class can't be instantiated
+```ts
+abstract class Department {
+  abstract describe(this: Department): void;
+}
+```
+ all of class extends Department, have to implement describe method.
+
+### 8. Interface
+- Just use to describe the structure of a object and make sure all object use this interface must to use this structure
+- Don't allow init value and implementation at all in interface
+- About my experience - Interface defines behaiviors of a objects and can share many type of objects.
+- Can use readonly only interface
+-  Extends in 2 interfaces.
+- Interface can't be instantiated and are not compliled
+```ts
+interface Named {
+  readonly name?: string; //optional property
+}
+
+interface Greetable extends Named { //extends in 2 interface allowed
+  great(pharse: string): void;
+}
+
+interface Person extends Greetable {
+  age: number;
+}
+
+class Student implement Person {
+  name?: string; //Optional property
+  agre: 30;
+
+  constructor(n?: string) { //optional parameter
+   if(n) this.name = n;
+  }
+
+  greet(phrase: string) {
+    console.log("Hello student : "+ phrase);
+  }
+}
+```
+1. Interface as a function types
+```ts
+//type AddFn = (a: number, b: number) => number;
+interface AddFn {
+  (a: number, n: number): number;
+}
+```
+
+# Advanced Types
+- Intersection types
+- Type Guards
+- Discriminated Unions
+- Type Casting
+- Function overload
+
+### 1. Intersection Type
+ Allow combine other types.
+ ```ts
+type Admin = {
+  name: string;
+  privileges: string[];
+}
+
+type Employee = {
+  name: string;
+  startDate: Date;
+}
+
+type ElavatedEmployee = Admin & Employee;
+const e1: ElavatedEmployee = {
+  name: 'Thanh',
+  privileges: 'server',
+  startDate: new Date();
+}
+
+//example 2
+type Combinable = string | number; //union
+type Numeric = number | boolean; // union
+type Universal = Combinable & Numberic;
+```
+If you use interface for that code you can use the extends.
+### 2. Type Guards
+```ts
+class Car {
+  driver() {
+    console.log('Driving ...');
+  }
+}
+
+class Truck {
+  driver() {
+    console.log('Driving truck ...');
+  }
+
+  loadCargo(anmount: number) {
+    console.log('Load cargo...' + number);
+  }
+}
+
+type Vehicle = Car | Trunk;
+
+const v1 = new Car();
+const v2 = new Trunk();
+
+function useVehicle(v : Vehicle) {
+  v.drive();
+  if('loadCargo' in v) { // I really don't like this way to check because can miss the name this is Type Guards
+    v.loadCargo(1000);
+  }
+}
+
+useVehicle(v1); //run without loadCargo
+useVehicle(v2); // run with Truch and have loadCargo
+```
+
+### 3. Discrimanated Unions
+```ts
+class Car {
+  type = 'Car';
+  driver() {
+    console.log('Driving ...');
+  }
+}
+
+class Truck {
+  type = 'Truck'
+  driver() {
+    console.log('Driving truck ...');
+  }
+
+  loadCargo(anmount: number) {
+    console.log('Load cargo...' + number);
+  }
+}
+
+type Vehicle = Car | Trunk;
+
+const v1 = new Car();
+const v2 = new Trunk();
+
+function useVehicle(v : Vehicle) {
+  switch(v.type) { //this is the way to Discrimanated the Unions to get correct class.
+    case 'Car': { //Me: don't like to set a fixed source code here humzzzzz. Don't like this way
+      v.driver();
+    },
+    case 'Truck': {
+      v.driver();
+      v.loadCargo(1000);
+    }
+  }
+}
+
+useVehicle(v1); //run without loadCargo
+useVehicle(v2); // run with Truch and have loadCargo
+```
+### 4. Type Casting
+```ts
+ const taxi = .... as Car; // cast a taxi object to Car type becasue it is Car type, accessable Car function after this cast.
+```
+### 5. Index properties
+```ts
+interface ErrorContainer {
+  [prop: string]: string;
+}
+
+const errorBag: ErrorContainer {
+  email: 'Not a valid email',
+  username: 'Must start with capital character !'
+}
+```
+### 6. Function overloads
+```ts
+ //Overload example, if a and b is number, then return type = number and if a is tring, b is tring then return type = string
+ function add(a: number, b:number): number;
+ function add(a: string, b:string) : string;
+ function add(a: Combination, b: Combination) {
+ }
+```
+
+### 7. Optional Chaining
