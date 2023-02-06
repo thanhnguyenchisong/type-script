@@ -424,6 +424,7 @@ type Universal = Combinable & Numberic;
 ```
 If you use interface for that code you can use the extends.
 ### 2. Type Guards
+Code pattern where you check for a certain type fore before you try to do something with it at runtime.
 ```ts
 class Car {
   driver() {
@@ -522,3 +523,171 @@ const errorBag: ErrorContainer {
 ```
 
 ### 7. Optional Chaining
+```ts
+ person?.job?.title; //help us check the variable is available
+```
+### 8. Nullish Coalescing
+```ts
+const input = null;
+const storeInput = input || 'DEFAULT'; //take Default value because input == null or undefined.
+input = '';
+storeInput = input ?? 'DEFAULT'; //check not empty not 0, not null. not undefined
+
+```
+# Generic
+### 1.Built-in Generics & What are Generics
+ Express a feature with not specific type object which can be applied in feature =. so we can use it in many places for many target object.
+ ```ts
+ const names: Array<string> = []; //string[];
+ ```
+ ### 2. Create generic function
+ ```ts
+ function merge<T, U>(objA: T, objB: U) {
+    return Object.assign(objA, objB);
+ }
+
+  const  mergeObj = merge( {name: 'Thanh', hibbies: ['Sports']}, {age: 30}); //=> auto infer the type for generic behind
+  console.log(mergeObj.age); //It can be access and log 30 
+ ```
+### 3. Work with Constraints
+From example 2 - we can send a some in parameter -> It is hot our expected input so we have do a constraint.
+```ts
+ function merge<T extends object , U extends object>(objA: T, objB: U) { //We have this contraint here. It will check and you can't send the input which is not object. 
+    return Object.assign(objA, objB);
+ }
+```
+### 4. Aother Generic Function
+Idea for generic we don't need to care about input type but sometime we have to some certain function to interact inside of main function, so we should make it as common function and put it in a generic interface to use like ``` T extends GenerticType ```
+
+### 5. "keyof" Constaint
+```ts
+function extractAndConvert<T extends object, U extends keyof T>(obj: T, key: U) {
+  return object[key];
+}
+```
+### 4. Generic class
+Same idea with generic function
+```ts
+class Storage<T> {
+ // can use T inside of this class
+}
+class StoragePrimitives<T extends string | number | boolean> {
+ // can use T inside of this class
+}
+```
+### 5. Generic Utility Types
+```ts
+  const person: Parial<Person> = {}; //that will set all properties in Person become optional
+  const names: Readonly<string[]> = ['Max', 'Anna']; //It become readonly array and can't push more value to.
+```
+### Generic Types vs Union Types
+```ts
+ class StoragePrimitives<T extends string | number | boolean> { //can use union type hgere
+ // can use T inside of this class
+}
+```
+
+# DECORATORS
+
+### 1. Class Decorator
+```ts
+ function Logger(constructor: Function) {
+  console.log('Logging...');
+  console.log(constructor);
+ }
+
+ @Logger
+ class Person {
+  name = 'Thanh';
+  constructor() {
+    console.log('Creating person object ...');
+  }
+ }
+```
+### 2. Decorator Factories.
+
+ ```ts
+ function Logger(msg: string) {
+  return function (constructor: Function) {
+    console.log(msg);
+    console.log(constructor);
+  }
+ }
+
+ @Logger('Person')
+ class Person {
+  name = 'Thanh';
+  constructor() {
+    console.log('Creating person object ...');
+  }
+ }
+```
+### 3. More usefull Decorators
+It is Decorator in Angular - you can see it to understand more.
+```ts
+  function Logger(msg: string) {
+    return function (constructor: Function) {
+      console.log(msg);
+      console.log(constructor);
+    }
+ }
+
+ function WithTemplate(template: string, hookId: string) {
+  return function(contructor: function) {
+    const hookEl = document.getElementById(hookId);
+    const p =  new constructor();
+    if(!hookEl) {
+      hookEl.innerHTML = template;
+      hookEl.querySelector('h1')!.textContent = p.name
+    }
+  }
+ }
+ @Logger() //can have multiple decorator and it run from top to bottom
+ @WithTemplate('<h1>My personal template</h1>', 'app')
+ class Person {
+  max = 'Thanh';
+  constructor() {
+    console.log('Creating person object...');
+  }
+ }
+```
+### 4. Property Decorators. Accessor & Parameter
+```ts
+function Log(target: any, propertyName: String | Symbol) {
+  console.log('Property decorator');
+  console.log(target, propertyName);
+}
+
+function Log2(target: any, name: string,  desciptor: PropertyDescriptor) {
+  console.log('Accessor decorator');
+  console.log(target);
+  console.log(name);
+  console.log(descriptor);
+}
+
+function Log3(target: any, name: string | Symbol, descriptor: PropertyDescriptor) {
+
+}
+
+function Log4(targer: any, nameMethod: string | Symbol, positionOfParameter: number) {
+  console.log('Paramerter decorator');
+  console.log(target);
+  console.log(nameMethod);
+  console.log(positionOfParameter);
+}
+
+class Product {
+  @Log
+  title: string;
+  private _price: number;
+
+  @Log2
+  set price(@Log4 val: number) {
+    if(val > 0) {
+      thí._price = val;
+    } else {
+      throw new Error('Invalid price');
+    }
+  }
+}
+```
