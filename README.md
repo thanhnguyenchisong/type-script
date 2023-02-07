@@ -691,3 +691,63 @@ class Product {
   }
 }
 ```
+### 5. When do Decorators Execute ??
+Deeoratoes will be call when you work with class, method, property
+
+### 6. Returning (changing) a Class in a Class Decorators
+
+### 7. Autobinding
+```ts
+ function Autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
+  const originalMethod = descriptor.value;
+  const adjDescriptor: PropertyDescriptor = {
+    configurable: true,
+    enumerable: false,
+    get() {
+      const boundFn = originalMethod.bind(this); //bind the this from class to listener
+      return boundFn;
+    }
+  };
+  return adjDescriptor;
+ }
+
+class Printer {
+  message = 'This works!';
+
+  @Autobind
+  showMessage() {
+    console.log(this.message);
+  }
+}
+
+const p = new Printer();
+p.showMessage(); //this will disaply mssage = 'This works!'
+
+const button = document.querrySelector('button');
+button.addEventListener('click', p.showMessage); //if we don't have Autobind in showMessage method
+// then then p.showMessage will recive the this from button so value = undefine but after my @Autobind it works with message = 'It is works'
+
+```
+### 7. Validation with Decorators
+```ts
+function Required() {
+
+}
+
+function PositiveNumber() {
+
+}
+
+class Course {
+  @Required
+  title: string;
+
+  @PositiveNumber
+  price: number;
+
+  constructor(t: string, p: number) {
+    this.title = t;
+    this.price = p;
+  }
+}
+
