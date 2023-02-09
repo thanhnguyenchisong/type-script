@@ -692,10 +692,12 @@ class Product {
 }
 ```
 ### 5. When do Decorators Execute ??
-Deeoratoes will be call when you work with class, method, property
+when class is defined
+That mean, when we do in runtime example create a new class or call the method, properties
+It allow addition setup after class is defined, hehind sence code, then we have to call to this source code.
 
 ### 6. Returning (changing) a Class in a Class Decorators
-
+We can add the logic which doesn't run when the class is defied, It run when the class is intenciated, object initd
 ### 7. Autobinding
 ```ts
  function Autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
@@ -703,8 +705,9 @@ Deeoratoes will be call when you work with class, method, property
   const adjDescriptor: PropertyDescriptor = {
     configurable: true,
     enumerable: false,
-    get() {
-      const boundFn = originalMethod.bind(this); //bind the this from class to listener
+    get() { //try to do something when access the property
+      const boundFn = originalMethod.bind(this); //this here is refer to whatever trigger getter method and getter method will be trigged by concreate object which's belong
+      //so this in getter method always refer to object we define the getter, so It is not be overriden by addEventListener because getter as the extra layer bw our functions will be executed and the object and the object which's belong and event listener => this refer to original object // this is binding 
       return boundFn;
     }
   };
@@ -726,16 +729,26 @@ p.showMessage(); //this will disaply mssage = 'This works!'
 const button = document.querrySelector('button');
 button.addEventListener('click', p.showMessage); //if we don't have Autobind in showMessage method
 // then then p.showMessage will recive the this from button so value = undefine but after my @Autobind it works with message = 'It is works'
-
+//Manually : p.showMessage.bind(p)
 ```
 ### 7. Validation with Decorators
+You can you class validator lib - don't need to write it by your self
+Use class-tranformer to parse the data to a object with defined class.
 ```ts
-function Required() {
+interface ValidatorConfig {
+  [property: string]: { //class name
+    [prop: string] : [] //name of properties
+  }
+}
 
+const validateRegistry:ValidatorConfig;
+
+function Required() {
+  //add value to validateRegistry for requite
 }
 
 function PositiveNumber() {
-
+ //add value to validateRegistry for posible number
 }
 
 class Course {
@@ -751,3 +764,4 @@ class Course {
   }
 }
 
+# END
