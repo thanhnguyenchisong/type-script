@@ -692,8 +692,8 @@ class Product {
 }
 ```
 ### 5. When do Decorators Execute ??
-when class is defined
-That mean, when we do in runtime example create a new class or call the method, properties
+when class is defined, not in runtime.
+Runtime is when we create a new class or call the method, properties
 It allow addition setup after class is defined, hehind sence code, then we have to call to this source code.
 
 ### 6. Returning (changing) a Class in a Class Decorators
